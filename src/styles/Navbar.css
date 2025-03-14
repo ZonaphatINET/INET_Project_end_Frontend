@@ -1,0 +1,165 @@
+/* Navbar.css - ปรับปรุงตามธีมหลัก */
+.navbar {
+  background-color: var(--background-white);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-index-navbar);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-sm) 0;
+}
+
+.navbar-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;  
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.navbar-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-sm);
+}
+
+.navbar-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-dark);
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.navbar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  color: var(--text-medium);
+  font-weight: var(--font-medium);
+  transition: color var(--transition-normal), background-color var(--transition-normal);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.navbar-link:hover {
+  color: var(--primary-color);
+  background-color: var(--background-lighter);
+  text-decoration: none;
+}
+
+.navbar-link.active {
+  color: var(--primary-color);
+  background-color: var(--primary-lighter);
+  font-weight: var(--font-semibold);
+}
+
+.navbar-link.text-error {
+  color: var(--error-color);
+}
+
+.navbar-link.text-error:hover {
+  background-color: var(--error-light);
+}
+
+/* Menu Button for Mobile */
+.navbar-menu-button {
+  display: none;
+  padding: var(--spacing-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-medium);
+}
+
+.navbar-menu-button:hover {
+  color: var(--primary-color);
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .navbar-title {
+    font-size: var(--text-base);
+  }
+  
+  .navbar-link {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 var(--spacing-md);
+  }
+
+  .navbar-title {
+    font-size: var(--text-sm);  
+  }
+
+  .navbar-menu {
+    gap: var(--spacing-sm);
+  }
+
+  .navbar-link span {
+    display: none;
+  }
+  
+  .navbar-link {
+    padding: var(--spacing-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-menu-button {  
+    display: flex;
+  }
+
+  .navbar-menu {
+    display: none;  
+    position: absolute; 
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--background-white);
+    padding: var(--spacing-md);
+    flex-direction: column;
+    border-top: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+  }
+
+  .navbar-menu.show {
+    display: flex;
+  }
+  
+  .navbar-link {
+    width: 100%;  
+    justify-content: flex-start;
+    padding: var(--spacing-sm);
+  }
+  
+  .navbar-link span {
+    display: inline;
+  }
+  
+  .navbar-title {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

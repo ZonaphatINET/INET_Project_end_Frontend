@@ -1,0 +1,179 @@
+.skills-company-page {
+    min-height: calc(100vh - 64px);
+    background-color: var(--background-light);
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-lg);
+  }
+  
+  .skills-company-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--background-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-xl);
+  }
+  
+  .page-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .back-button {
+    margin-right: var(--spacing-md);
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+  }
+  
+  .search-wrapper {
+    position: relative;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: var(--spacing-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .company-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+  }
+  
+  .company-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+  }
+  
+  .company-card:hover {
+    background-color: var(--background-light);
+  }
+  
+  .company-card.selected {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+  }
+  
+  .existing-skills-section {
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background-color: var(--background-light);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .existing-skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+  
+  .existing-skill-tag {
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-full);
+    font-size: 0.875rem;
+  }
+  
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .skill-button {
+    padding: var(--spacing-sm);
+    background-color: var(--background-light);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+  }
+  
+  .new-skill-section {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .new-skill-input {
+    flex-grow: 1;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+  }
+  
+  .btn-add-skill {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    border: none;
+    border-radius: var(--border-radius-md);
+  }
+  
+  .selected-skills-section {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .selected-skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+  
+  .selected-skill-tag {
+    display: flex;
+    align-items: center;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-full);
+  }
+  
+  .remove-skill-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    margin-left: var(--spacing-xs);
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .btn-save-skills {
+    width: 50%;
+    padding: var(--spacing-md);
+    background-color: var(--primary-color);
+    color: var(--text-white);
+    border: none;
+    border-radius: var(--border-radius-md);
+    align-items: center;
+  }
