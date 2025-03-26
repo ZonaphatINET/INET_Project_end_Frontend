@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/INET_Project_end_Frontend/static/css/main.6b0f1791.css",
+    "main.js": "/INET_Project_end_Frontend/static/js/main.acf0e50e.js",
+    "static/js/488.e75445ad.chunk.js": "/INET_Project_end_Frontend/static/js/488.e75445ad.chunk.js",
+    "static/media/logo IT Blue-01-1.png": "/INET_Project_end_Frontend/static/media/logo IT Blue-01-1.59cc41ca530aa9802e6b.png",
+    "index.html": "/INET_Project_end_Frontend/index.html",
+    "main.6b0f1791.css.map": "/INET_Project_end_Frontend/static/css/main.6b0f1791.css.map",
+    "main.acf0e50e.js.map": "/INET_Project_end_Frontend/static/js/main.acf0e50e.js.map",
+    "488.e75445ad.chunk.js.map": "/INET_Project_end_Frontend/static/js/488.e75445ad.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6b0f1791.css",
+    "static/js/main.acf0e50e.js"
+  ]
+}
