@@ -21,7 +21,8 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && copy manifest.json build\\manifest.json",
+    "postbuild": "copy manifest.json build\\manifest.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
