@@ -13,7 +13,9 @@ import {
   CheckCircle, 
   NotebookPen,
   ChevronLeft,
-  ChevronRight  
+  ChevronRight,
+  Trash2,
+  AlertCircle  
 } from 'lucide-react';
 import Navbar from './Navbar';
 import '../styles/StudentToIndus.css';
@@ -40,6 +42,8 @@ const CompanyList = () => {
   const [editingCompany, setEditingCompany] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [companyToDelete, setCompanyToDelete] = useState(null);
 
   // ฟังก์ชันจัดการการค้นหาขั้นสูง
   const handleAdvancedSearch = (searchParams) => {
@@ -152,6 +156,39 @@ const CompanyList = () => {
   // 4. แก้ไขฟังก์ชัน handlePageChange ให้ชัดเจนขึ้น
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+  };
+
+   // เพิ่มฟังก์ชันเปิดโมดัลยืนยันการลบ
+  const handleDeleteCompany = (company) => {
+    setCompanyToDelete(company);
+    setIsDeleteModalOpen(true);
+  };
+
+   // เพิ่มฟังก์ชันสำหรับลบสถานประกอบการ
+  const confirmDeleteCompany = async () => {
+    try {
+      const response = await fetch(`${API_URL}/delete-company/${companyToDelete.company_id}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('ลบสถานประกอบการเรียบร้อยแล้ว');
+        setIsDeleteModalOpen(false);
+        setCompanyToDelete(null);
+        fetchCompanies(); // ดึงข้อมูลใหม่หลังจากลบ
+      } else {
+        if (response.status === 400) {
+          // กรณีมีการจับคู่กับนักศึกษาอยู่
+          alert(`ไม่สามารถลบสถานประกอบการได้: ${data.error}`);
+        } else {
+          alert(`เกิดข้อผิดพลาด: ${data.error || 'ไม่สามารถลบข้อมูลได้'}`);
+        }
+      }
+    } catch (error) {
+      alert(`เกิดข้อผิดพลาด: ${error.message}`);
+    }
   };
 
   // Generate pagination buttons
@@ -313,41 +350,48 @@ const CompanyList = () => {
         <div className="company-grid">
           {currentCompanies.map(company => (
             <div key={company.company_id} className="company-card">
-              {/* โค้ดกริดบริษัทเหมือนเดิม */}
-              <div className="company-card-header">
-                <h3 className="company-name">{company.company_name}</h3>
-                <div className="company-actions">
-                  <button 
-                    className="btn-icon"
-                    onClick={() => {
-                      setEditingCompany(company);
-                      setIsEditModalOpen(true);
-                    }}
-                  >
-                    <Edit size={18} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="company-info">
-                <div className="company-detail">
-                  <MapPin size={16} className="detail-icon" />
-                  <span>{company.address}</span>
-                </div>
-                <div className="company-detail">
-                  <Phone size={16} className="detail-icon" />
-                  <span>{company.contact_phone}</span>
-                </div>
-                <div className="company-detail">
-                  <User size={16} className="detail-icon" />
-                  <span>{company.contact_person}</span>
-                </div>
-                <div className="company-detail">
-                  <Briefcase size={16} className="detail-icon" />
-                  <span>{company.job_position}</span>
-                </div>
+            <div className="company-card-header">
+              <h3 className="company-name">{company.company_name}</h3>
+              <div className="company-actions">
+                <button 
+                  className="btn-icon"
+                  onClick={() => {
+                    setEditingCompany(company);
+                    setIsEditModalOpen(true);
+                  }}
+                  title="แก้ไขข้อมูล"
+                >
+                  <Edit size={18} />
+                </button>
+                <button 
+                  className="btn-icon delete"
+                  onClick={() => handleDeleteCompany(company)}
+                  title="ลบสถานประกอบการ"
+                >
+                  <Trash2 size={18} />
+                </button>
               </div>
             </div>
+          
+            <div className="company-info">
+              <div className="company-detail">
+                <MapPin size={16} className="detail-icon" />
+                <span>{company.address}</span>
+              </div>
+              <div className="company-detail">
+                <Phone size={16} className="detail-icon" />
+                <span>{company.contact_phone}</span>
+              </div>
+              <div className="company-detail">
+                <User size={16} className="detail-icon" />
+                <span>{company.contact_person}</span>
+              </div>
+              <div className="company-detail">
+                <Briefcase size={16} className="detail-icon" />
+                <span>{company.job_position}</span>
+              </div>
+            </div>
+          </div>
           ))}
         </div>
 
@@ -646,6 +690,66 @@ const CompanyList = () => {
             </>
           )}
         </Modal>
+
+        {/* เพิ่มโมดัลยืนยันการลบสถานประกอบการ */}
+<Modal
+  isOpen={isDeleteModalOpen}
+  onRequestClose={() => {
+    setIsDeleteModalOpen(false);
+    setCompanyToDelete(null);
+  }}
+  className="modal"
+  overlayClassName="modal-overlay"
+>
+  {companyToDelete && (
+    <>
+      <div className="modal-header">
+        <h2 className="modal-title">ยืนยันการลบสถานประกอบการ</h2>
+        <button 
+          className="modal-close"
+          onClick={() => {
+            setIsDeleteModalOpen(false);
+            setCompanyToDelete(null);
+          }}
+        >
+          <X size={20} />
+        </button>
+      </div>
+
+      <div className="modal-content">
+        <div className="warning-message">
+          <AlertCircle size={48} className="warning-icon" />
+          <p>คุณแน่ใจหรือไม่ว่าต้องการลบสถานประกอบการนี้? การกระทำนี้ไม่สามารถเรียกคืนได้</p>
+        </div>
+        
+        <div className="company-preview">
+          <p><strong>ชื่อสถานประกอบการ:</strong> {companyToDelete.company_name}</p>
+          <p><strong>ที่อยู่:</strong> {companyToDelete.address}</p>
+          <p><strong>ตำแหน่งงาน:</strong> {companyToDelete.job_position || '-'}</p>
+        </div>
+      </div>
+
+      <div className="modal-footer">
+        <button 
+          className="btn-secondary"
+          onClick={() => {
+            setIsDeleteModalOpen(false);
+            setCompanyToDelete(null);
+          }}
+        >
+          ยกเลิก
+        </button>
+        <button 
+          className="btn-delete"
+          onClick={confirmDeleteCompany}
+        >
+          ยืนยันการลบ
+        </button>
+      </div>
+    </>
+  )}
+</Modal>
+
       </div>
     </div>
   );

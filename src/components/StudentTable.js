@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import { Search, Upload, Download, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Upload, Download, AlertCircle, ChevronLeft, ChevronRight, Trash2, Info, X, ArrowUp, ArrowDown } from 'lucide-react';
+import Modal from 'react-modal';
 import Navbar from "./Navbar";
 import '../styles/StudentTable.css';
-import API_URL from '../config'; 
+import API_URL from '../config';
 
 const StudentTable = () => {
   const [students, setStudents] = useState([]);
@@ -15,6 +16,14 @@ const StudentTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [navigate, setNavigate] = useState();
   const itemsPerPage = 15;
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  // Add sorting state
+  const [sortConfig, setSortConfig] = useState({
+    key: 'student_id',
+    direction: 'ascending'
+  });
 
   useEffect(() => {
     fetchStudents();
@@ -75,6 +84,49 @@ const StudentTable = () => {
     }
   };
 
+  // Add sorting function
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Helper function to get sorted items
+  const getSortedItems = (items) => {
+    if (!sortConfig.key) return items;
+    
+    return [...items].sort((a, b) => {
+      // Handle undefined or null values
+      if (!a[sortConfig.key] && !b[sortConfig.key]) return 0;
+      if (!a[sortConfig.key]) return 1;
+      if (!b[sortConfig.key]) return -1;
+      
+      // Case-insensitive string comparison for string values
+      const aValue = typeof a[sortConfig.key] === 'string' ? a[sortConfig.key].toLowerCase() : a[sortConfig.key];
+      const bValue = typeof b[sortConfig.key] === 'string' ? b[sortConfig.key].toLowerCase() : b[sortConfig.key];
+      
+      if (aValue < bValue) {
+        return sortConfig.direction === 'ascending' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === 'ascending' ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  // Function to render sorting icon
+  const renderSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return null;
+    }
+    return sortConfig.direction === 'ascending' ? 
+      <ArrowUp size={16} className="sort-icon" /> : 
+      <ArrowDown size={16} className="sort-icon" />;
+  };
+
   const filteredStudents = students.filter((student) => {
     const searchLower = searchTerm.toLowerCase();
     const matchesSearch = 
@@ -91,10 +143,13 @@ const StudentTable = () => {
     return matchesSearch && matchesProgram && matchesStatus;
   });
 
+  // Apply sorting to filtered students
+  const sortedAndFilteredStudents = getSortedItems(filteredStudents);
+
   // Pagination logic
-  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+  const totalPages = Math.ceil(sortedAndFilteredStudents.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedStudents = filteredStudents.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedStudents = sortedAndFilteredStudents.slice(startIndex, startIndex + itemsPerPage);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -170,7 +225,7 @@ const StudentTable = () => {
     
     const csvData = [
       headers.join(","),
-      ...filteredStudents.map(student => 
+      ...sortedAndFilteredStudents.map(student => 
         headers.map(header => `"${student[header] || ""}"`).join(",")
       )
     ].join("\n");
@@ -183,6 +238,43 @@ const StudentTable = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleDeleteStudent = async (studentId) => {
+    try {
+      const response = await fetch(`${API_URL}/delete-student/${studentId}`, {
+        method: 'DELETE'
+      });
+  
+      if (response.ok) {
+        alert('ลบข้อมูลนักศึกษาเรียบร้อยแล้ว');
+        fetchStudents(); // รีโหลดข้อมูลหลังลบ
+        setIsDeleteModalOpen(false);
+        setSelectedStudent(null);
+      } else {
+        const data = await response.json();
+        throw new Error(data.message || 'ไม่สามารถลบข้อมูลนักศึกษาได้');
+      }
+    } catch (error) {
+      alert(`เกิดข้อผิดพลาด: ${error.message}`);
+    }
+  };
+
+  const fetchStudentDetails = async (studentId) => {
+    try {
+      // ทำการดึงข้อมูลรายละเอียดของนักศึกษา
+      const response = await fetch(`${API_URL}/student-details/${studentId}`);
+      
+      if (!response.ok) {
+        throw new Error('ไม่สามารถดึงข้อมูลรายละเอียดนักศึกษาได้');
+      }
+      
+      const data = await response.json();
+      setSelectedStudent(data);
+      setIsDetailsModalOpen(true);
+    } catch (error) {
+      alert(`เกิดข้อผิดพลาด: ${error.message}`);
+    }
   };
 
   // Generate pagination buttons
@@ -313,46 +405,102 @@ const StudentTable = () => {
           <>
             <div className="table-wrapper">
               <table className="student-table">
-                <thead>
-                  <tr>
-                    <th>รหัสนักศึกษา</th>
-                    <th>ชื่อ-นามสกุล</th>
-                    <th>สาขาวิชา</th>
-                    <th>เบอร์โทรศัพท์</th>
-                    <th>สถานะ</th>
-                    <th>สถานประกอบการ</th>
-                  </tr>
-                </thead>
+              <thead>
+  <tr>
+    <th 
+      onClick={() => requestSort('student_id')} 
+      className="sortable-header"
+      data-sorted={sortConfig.key === 'student_id' ? 'true' : 'false'}
+    >
+      รหัสนักศึกษา {renderSortIcon('student_id')}
+    </th>
+    <th 
+      onClick={() => requestSort('name')} 
+      className="sortable-header"
+      data-sorted={sortConfig.key === 'name' ? 'true' : 'false'}
+    >
+      ชื่อ-นามสกุล {renderSortIcon('name')}
+    </th>
+    <th 
+      onClick={() => requestSort('program')} 
+      className="sortable-header"
+      data-sorted={sortConfig.key === 'program' ? 'true' : 'false'}
+    >
+      สาขาวิชา {renderSortIcon('program')}
+    </th>
+    <th 
+      onClick={() => requestSort('phone')} 
+      className="sortable-header"
+      data-sorted={sortConfig.key === 'phone' ? 'true' : 'false'}
+    >
+      เบอร์โทรศัพท์ {renderSortIcon('phone')}
+    </th>
+    <th 
+      onClick={() => requestSort('status')} 
+      className="sortable-header"
+      data-sorted={sortConfig.key === 'status' ? 'true' : 'false'}
+    >
+      สถานะ {renderSortIcon('status')}
+    </th>
+    <th 
+      onClick={() => requestSort('company')} 
+      className="sortable-header"
+      data-sorted={sortConfig.key === 'company' ? 'true' : 'false'}
+    >
+      สถานประกอบการ {renderSortIcon('company')}
+    </th>
+    <th>จัดการ</th>
+  </tr>
+</thead>
                 <tbody>
-                  {isLoading ? (
-                    <tr className="loading-row">
-                      <td colSpan="6">กำลังโหลดข้อมูล...</td>
-                    </tr>
-                  ) : paginatedStudents.length > 0 ? (
-                    paginatedStudents.map((student) => (
-                      <tr key={student.student_id}>
-                        <td>{student.student_id}</td>
-                        <td>{student.name}</td>
-                        <td>{student.program}</td>
-                        <td>{student.phone || "-"}</td>
-                        <td>
-                          <span className={`status-cell ${
-                            student.status === 'กำลังดำเนินการ' ? 'status-pending' : 
-                            student.status === 'ตอบรับ' ? 'status-approved' : 
-                            student.status === 'ไม่ตอบรับ' ? 'status-rejected' : ''
-                          }`}>
-                            {student.status || "ไม่มีสถานะ"}
-                          </span>
-                        </td>
-                        <td>{student.company || "-"}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr className="empty-row">
-                      <td colSpan="6">ไม่พบข้อมูลนักศึกษา</td>
-                    </tr>
-                  )}
-                </tbody>
+  {isLoading ? (
+    <tr className="loading-row">
+      <td colSpan="7">กำลังโหลดข้อมูล...</td>
+    </tr>
+  ) : paginatedStudents.length > 0 ? (
+    paginatedStudents.map((student) => (
+      <tr key={student.student_id}>
+        <td>{student.student_id}</td>
+        <td>{student.name}</td>
+        <td>{student.program}</td>
+        <td>{student.phone || "-"}</td>
+        <td>
+          <span className={`status-cell ${
+            student.status === 'กำลังดำเนินการ' ? 'status-pending' : 
+            student.status === 'ตอบรับ' ? 'status-approved' : 
+            student.status === 'ไม่ตอบรับ' ? 'status-rejected' : ''
+          }`}>
+            {student.status || "ไม่มีสถานะ"}
+          </span>
+        </td>
+        <td>{student.company || "-"}</td>
+        <td className="action-cell">
+          <button 
+            className="btn-icon"
+            onClick={() => fetchStudentDetails(student.student_id)}
+            title="ดูรายละเอียด"
+          >
+            <Info size={18} />
+          </button>
+          <button 
+            className="btn-icon delete"
+            onClick={() => {
+              setSelectedStudent(student);
+              setIsDeleteModalOpen(true);
+            }}
+            title="ลบข้อมูลนักศึกษา"
+          >
+            <Trash2 size={18} />
+          </button>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr className="empty-row">
+      <td colSpan="7">ไม่พบข้อมูลนักศึกษา</td>
+    </tr>
+  )}
+</tbody>
               </table>
             </div>
 
@@ -414,6 +562,152 @@ const StudentTable = () => {
           </ul>
         </div>
       </div>
+
+      {/* โมดัลยืนยันการลบ */}
+<Modal
+  isOpen={isDeleteModalOpen}
+  onRequestClose={() => {
+    setIsDeleteModalOpen(false);
+    setSelectedStudent(null);
+  }}
+  className="confirm-modal"
+  overlayClassName="modal-overlay"
+>
+  <div className="modal-header">
+    <h2 className="modal-title">ยืนยันการลบข้อมูลนักศึกษา</h2>
+    <button 
+      className="modal-close"
+      onClick={() => {
+        setIsDeleteModalOpen(false);
+        setSelectedStudent(null);
+      }}
+    >
+      <X size={20} />
+    </button>
+  </div>
+  
+  <div className="modal-content">
+    <div className="warning-message">
+      <AlertCircle size={48} className="warning-icon" />
+      <p>คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนักศึกษานี้? การกระทำนี้ไม่สามารถเรียกคืนได้</p>
+    </div>
+    
+    {selectedStudent && (
+      <div className="student-preview">
+        <p><strong>รหัสนักศึกษา:</strong> {selectedStudent.student_id}</p>
+        <p><strong>ชื่อ-นามสกุล:</strong> {selectedStudent.name}</p>
+        <p><strong>สาขาวิชา:</strong> {selectedStudent.program}</p>
+      </div>
+    )}
+  </div>
+  
+  <div className="modal-footer">
+    <button 
+      className="btn-secondary"
+      onClick={() => {
+        setIsDeleteModalOpen(false);
+        setSelectedStudent(null);
+      }}
+    >
+      ยกเลิก
+    </button>
+    <button 
+      className="btn-delete"
+      onClick={() => handleDeleteStudent(selectedStudent.student_id)}
+    >
+      ยืนยันการลบ
+    </button>
+  </div>
+</Modal>
+
+{/* โมดัลแสดงรายละเอียด */}
+<Modal
+  isOpen={isDetailsModalOpen}
+  onRequestClose={() => {
+    setIsDetailsModalOpen(false);
+    setSelectedStudent(null);
+  }}
+  className="details-modal"
+  overlayClassName="modal-overlay"
+>
+  <div className="modal-header">
+    <h2 className="modal-title">ข้อมูลนักศึกษา</h2>
+    <button 
+      className="modal-close"
+      onClick={() => {
+        setIsDetailsModalOpen(false);
+        setSelectedStudent(null);
+      }}
+    >
+      <X size={20} />
+    </button>
+  </div>
+  
+  {selectedStudent && (
+    <div className="modal-content">
+      <div className="student-details-grid">
+        <div className="detail-item">
+          <span className="detail-label">รหัสนักศึกษา:</span>
+          <span className="detail-value">{selectedStudent.student_id}</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">ชื่อ-นามสกุล:</span>
+          <span className="detail-value">{selectedStudent.name}</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">สาขาวิชา:</span>
+          <span className="detail-value">{selectedStudent.program}</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">อีเมล:</span>
+          <span className="detail-value">{selectedStudent.email || "-"}</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">เบอร์โทรศัพท์:</span>
+          <span className="detail-value">{selectedStudent.phone || "-"}</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">สถานะ:</span>
+          <span className={`status-badge ${
+            selectedStudent.status === 'กำลังดำเนินการ' ? 'status-pending' : 
+            selectedStudent.status === 'ตอบรับ' ? 'status-approved' : 
+            selectedStudent.status === 'ไม่ตอบรับ' ? 'status-rejected' : ''
+          }`}>
+            {selectedStudent.status || "ไม่มีสถานะ"}
+          </span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">สถานประกอบการ:</span>
+          <span className="detail-value">{selectedStudent.company || "-"}</span>
+        </div>
+        
+        {selectedStudent.skills && selectedStudent.skills.length > 0 && (
+          <div className="detail-item skills-item">
+            <span className="detail-label">ทักษะ:</span>
+            <div className="skills-grid">
+              {selectedStudent.skills.map((skill, index) => (
+                <span key={index} className="skill-tag">{skill}</span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )}
+  
+  <div className="modal-footer">
+    <button 
+      className="btn-secondary"
+      onClick={() => {
+        setIsDetailsModalOpen(false);
+        setSelectedStudent(null);
+      }}
+    >
+      ปิด
+    </button>
+  </div>
+</Modal>
+
     </div>
   );
 };
