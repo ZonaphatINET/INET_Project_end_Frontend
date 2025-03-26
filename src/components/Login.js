@@ -5,6 +5,7 @@ import { Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import './Navbar';  // If you need Navbar
 import '../styles/Login.css';
 import logoImage from '../img/logo IT Blue-01-1.png';
+import API_URL from '../config'; 
 
 // Rest of the component remains the same
 

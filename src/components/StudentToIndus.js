@@ -22,6 +22,7 @@ import '../styles/StudentToIndus.css';
 import { useNavigate } from 'react-router-dom';
 import AdvancedSearch from './AdvancedSearch';
 import CompanyReviews from './CompanyReviews';
+import API_URL from '../config';
 
 const StudentToIndus = () => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const StudentToIndus = () => {
 
   const fetchCompanyStudentCounts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/company-student-counts');
+      const response = await fetch(`${API_URL}/company-student-counts`);
       const data = await response.json();
       
       // แปลงข้อมูลให้เป็นรูปแบบ object เพื่อง่ายต่อการเข้าถึง
@@ -73,7 +74,7 @@ const StudentToIndus = () => {
 
   const fetchCompanyRatings = async () => {
     try {
-      const response = await fetch('http://localhost:5000/all-companies-ratings');
+      const response = await fetch(`${API_URL}/all-companies-ratings`);
       const data = await response.json();
       
       // แปลงข้อมูลให้เป็นรูปแบบ object เพื่อง่ายต่อการเข้าถึง
@@ -181,7 +182,7 @@ const StudentToIndus = () => {
           return;
         }
   
-        const response = await fetch(`http://localhost:5000/check-match-status/${student_id}`);
+        const response = await fetch(`${API_URL}/check-match-status/${student_id}`);
         const data = await response.json();
         
         if (data.has_match) {
@@ -232,7 +233,7 @@ const StudentToIndus = () => {
 
   const fetchCompanies = async () => {
     try {
-      const response = await fetch('http://localhost:5000/companies');
+      const response = await fetch(`${API_URL}/companies`);
       const data = await response.json();
       const processedCompanies = data.map(item => ({
         company_id: item.company_id,
@@ -247,7 +248,7 @@ const StudentToIndus = () => {
 
   const handleAddCompany = async () => {
     try {
-      const response = await fetch('http://localhost:5000/add-company', {
+      const response = await fetch(`${API_URL}/add-company`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -271,7 +272,7 @@ const StudentToIndus = () => {
 
   const handleEditCompany = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/edit-company/${editingCompany.company_id}`, {
+      const response = await fetch(`${API_URL}/edit-company/${editingCompany.company_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -335,7 +336,7 @@ const StudentToIndus = () => {
       console.log('Student ID:', student_id);
       console.log('Company ID:', company.company_id);
   
-      const response = await fetch('http://localhost:5000/match-company', {
+      const response = await fetch(`${API_URL}/match-company`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -386,7 +387,7 @@ const StudentToIndus = () => {
           return;
         }
   
-        const response = await fetch(`http://localhost:5000/check-match-status/${student_id}`);
+        const response = await fetch(`${API_URL}/check-match-status/${student_id}`);
         const data = await response.json();
         
         if (data.has_match) {
@@ -448,7 +449,7 @@ const [itemsPerPage] = useState(4);  // เปลี่ยนเป็น 6 แ�
     const fetchStudentProfile = async () => {
       const username = localStorage.getItem('username');
       try {
-        const response = await fetch(`http://localhost:5000/student-profile?username=${username}`);
+        const response = await fetch(`${API_URL}/student-profile?username=${username}`);
         const data = await response.json();
         const skills = data.profile.skills || [];
         setStudentSkills(skills);
@@ -470,7 +471,7 @@ const [itemsPerPage] = useState(4);  // เปลี่ยนเป็น 6 แ�
           return;
         }
   
-        const response = await fetch(`http://localhost:5000/check-match-status/${student_id}`);
+        const response = await fetch(`${API_URL}/check-match-status/${student_id}`);
         const data = await response.json();
         
         if (data.has_match) {
@@ -494,7 +495,7 @@ const [itemsPerPage] = useState(4);  // เปลี่ยนเป็น 6 แ�
 const fetchRankedCompanies = async () => {
   try {
     // กำหนดให้รับข้อมูลเฉพาะหน้าปัจจุบันจาก backend
-    const response = await fetch('http://localhost:5000/ranked-companies', {
+    const response = await fetch(`${API_URL}/ranked-companies`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -516,7 +517,7 @@ const fetchRankedCompanies = async () => {
     }));
 
     // ดึงข้อมูลคะแนนรีวิวเพื่อใช้ในการจัดเรียง
-    const ratingsResponse = await fetch('http://localhost:5000/all-companies-ratings');
+    const ratingsResponse = await fetch(`${API_URL}/all-companies-ratings`);
     const ratingsData = await ratingsResponse.json();
     
     // สร้าง map ของคะแนนรีวิว

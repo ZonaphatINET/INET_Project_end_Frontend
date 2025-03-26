@@ -9,6 +9,7 @@ import {
   ChevronUp 
 } from 'lucide-react';
 import '../styles/AdvancedSearch.css';
+import API_URL from '../config';
 
 const AdvancedSearch = ({ onSearch }) => {
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -36,7 +37,7 @@ const AdvancedSearch = ({ onSearch }) => {
     // ดึงข้อมูลทักษะที่มีอยู่จาก API
     const fetchSkills = async () => {
       try {
-        const response = await fetch('http://localhost:5000/available-skills');
+        const response = await fetch(`${API_URL}/available-skills`);
         const data = await response.json();
         if (data.skills) {
           setAvailableSkills(data.skills);

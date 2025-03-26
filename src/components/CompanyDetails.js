@@ -4,6 +4,7 @@ import { MapPin, Phone, User, Briefcase, ArrowLeft, CheckCircle } from 'lucide-r
 import Navbar from './Navbar';
 import CompanyReviews from './CompanyReviews';
 import '../styles/CompanyDetails.css';
+import API_URL from '../config'; 
 
 const CompanyDetails = () => {
   const { companyId } = useParams();
@@ -19,7 +20,7 @@ const CompanyDetails = () => {
     const fetchCompanyDetails = async () => {
       try {
         // ดึงข้อมูลบริษัท
-        const companyResponse = await fetch(`http://localhost:5000/companies`);
+        const companyResponse = await fetch(`${API_URL}/companies`);
         const allCompanies = await companyResponse.json();
         
         // หาบริษัทที่ตรงกับ companyId
@@ -39,7 +40,7 @@ const CompanyDetails = () => {
           
           // ตรวจสอบสถานะการจับคู่
           if (profile.student_id) {
-            const matchResponse = await fetch(`http://localhost:5000/check-match-status/${profile.student_id}`);
+            const matchResponse = await fetch(`${API_URL}/check-match-status/${profile.student_id}`);
             const matchData = await matchResponse.json();
             
             if (matchData.has_match) {
@@ -72,7 +73,7 @@ const CompanyDetails = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/match-company', {
+      const response = await fetch(`${API_URL}/match-company`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

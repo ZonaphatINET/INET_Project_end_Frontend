@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Star, StarHalf, X, Edit, Trash, MessageCircle } from 'lucide-react';
 import Modal from 'react-modal';
 import '../styles/CompanyReviews.css';
+import API_URL from '../config'; 
 
 const CompanyReviews = ({ companyId, companyName }) => {
   const [reviews, setReviews] = useState([]);
@@ -33,7 +34,7 @@ const CompanyReviews = ({ companyId, companyName }) => {
   // ดึงข้อมูลรีวิวจาก API
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/company-reviews/${companyId}`);
+      const response = await fetch(`${API_URL}/company-reviews/${companyId}`);
       const data = await response.json();
       
       setReviews(data.reviews);
@@ -72,7 +73,7 @@ const CompanyReviews = ({ companyId, companyName }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/add-review', {
+      const response = await fetch(`${API_URL}/add-review`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -110,7 +111,7 @@ const CompanyReviews = ({ companyId, companyName }) => {
       }
 
     try {
-      const response = await fetch(`http://localhost:5000/delete-review/${userReview.review_id}`, {
+      const response = await fetch(`${API_URL}/delete-review/${userReview.review_id}`, {
         method: 'DELETE'
       });
 

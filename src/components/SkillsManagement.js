@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PlusCircle, X, ArrowLeft } from 'lucide-react';
 import Navbar from './Navbar';
 import '../styles/SkillsManagement.css';
+import API_URL from '../config'; 
 
 const SkillsManagement = () => {
   const [availableSkills, setAvailableSkills] = useState([]);
@@ -16,7 +17,7 @@ const SkillsManagement = () => {
     // โหลดข้อมูลทักษะที่มีทั้งหมด
     const fetchSkills = async () => {
       try {
-        const response = await fetch('http://localhost:5000/skills');
+        const response = await fetch(`${API_URL}/skills`);
         const data = await response.json();
         setAvailableSkills(data);
       } catch (error) {
@@ -27,7 +28,7 @@ const SkillsManagement = () => {
     // โหลดข้อมูลทักษะของผู้ใช้
     const fetchUserSkills = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/student-profile?username=${username}`);
+        const response = await fetch(`${API_URL}/student-profile?username=${username}`);
         const data = await response.json();
         setUserSkills(data.profile.skills || []);
       } catch (error) {
@@ -49,7 +50,7 @@ const SkillsManagement = () => {
     if (!newSkill.trim()) return;
     
     try {
-      const response = await fetch('http://localhost:5000/add-skill', {
+      const response = await fetch(`${API_URL}/add-skill`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +75,7 @@ const SkillsManagement = () => {
     if (userSkills.includes(skillName)) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/update-user-skills`, {
+      const response = await fetch(`${API_URL}/update-user-skills`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +97,7 @@ const SkillsManagement = () => {
   // ลบทักษะ
   const handleRemoveSkill = async (skillToRemove) => {
     try {
-      const response = await fetch(`http://localhost:5000/update-user-skills`, {
+      const response = await fetch(`${API_URL}/update-user-skills`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

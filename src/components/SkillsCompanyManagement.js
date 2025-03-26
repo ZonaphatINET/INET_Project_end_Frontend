@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PlusCircle, X, Search, ArrowLeft, Trash2 } from 'lucide-react';
 import Navbar from './Navbar';
 import '../styles/SkillsCompanyManagement.css';
+import API_URL from '../config'; 
 
 const SkillsCompanyManagement = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const SkillsCompanyManagement = () => {
 
   const fetchCompanies = async () => {
     try {
-      const response = await fetch('http://localhost:5000/companies');
+      const response = await fetch(`${API_URL}/companies`);
       const data = await response.json();
       setCompanies(data);
     } catch (error) {
@@ -31,7 +32,7 @@ const SkillsCompanyManagement = () => {
 
   const fetchSkills = async () => {
     try {
-      const response = await fetch('http://localhost:5000/skills');
+      const response = await fetch(`${API_URL}/skills`);
       const data = await response.json();
       setSkills(data);
     } catch (error) {
@@ -43,7 +44,7 @@ const SkillsCompanyManagement = () => {
     if (!newSkill.trim()) return;
 
     try {
-      const response = await fetch('http://localhost:5000/add-skill', {
+      const response = await fetch(`${API_URL}/add-skill`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +67,7 @@ const SkillsCompanyManagement = () => {
     if (!selectedCompany) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/remove-skill-from-company/${selectedCompany.company_id}`, {
+      const response = await fetch(`${API_URL}/remove-skill-from-company/${selectedCompany.company_id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +133,7 @@ const SkillsCompanyManagement = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/add-skills-to-company/${selectedCompany.company_id}`, {
+      const response = await fetch(`${API_URL}/add-skills-to-company/${selectedCompany.company_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

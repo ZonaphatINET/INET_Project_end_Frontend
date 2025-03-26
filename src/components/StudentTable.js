@@ -3,6 +3,7 @@ import Papa from "papaparse";
 import { Search, Upload, Download, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import Navbar from "./Navbar";
 import '../styles/StudentTable.css';
+import API_URL from '../config'; 
 
 const StudentTable = () => {
   const [students, setStudents] = useState([]);
@@ -22,21 +23,21 @@ const StudentTable = () => {
   const fetchStudents = async () => {
     try {
       // ดึงข้อมูลนักศึกษา
-      const studentsResponse = await fetch("http://localhost:5000/students-Table");
+      const studentsResponse = await fetch(`${API_URL}/students-Table`);
       if (!studentsResponse.ok) {
         throw new Error('Failed to fetch students');
       }
       const studentsData = await studentsResponse.json();
   
       // ดึงข้อมูลการแมช
-      const matchResponse = await fetch("http://localhost:5000/all-matches");
+      const matchResponse = await fetch(`${API_URL}/all-matches`);
       if (!matchResponse.ok) {
         throw new Error('Failed to fetch matches');
       }
       const matchesData = await matchResponse.json();
   
       // ดึงข้อมูลบริษัท
-      const companiesResponse = await fetch("http://localhost:5000/companies");
+      const companiesResponse = await fetch(`${API_URL}/companies`);
       if (!companiesResponse.ok) {
         throw new Error('Failed to fetch companies');
       }
@@ -129,7 +130,7 @@ const StudentTable = () => {
             },
           }));
 
-          const response = await fetch("http://localhost:5000/upload-students", {
+          const response = await fetch(`${API_URL}/upload-students`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

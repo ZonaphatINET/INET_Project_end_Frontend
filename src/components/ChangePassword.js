@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Lock, Eye, EyeOff, Check, AlertCircle } from 'lucide-react';
 import '../styles/ChangePassword.css';
 import logoImage from '../img/logo IT Blue-01-1.png';
+import API_URL from '../config'; 
 
 const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState("");
@@ -21,8 +22,9 @@ const ChangePassword = () => {
     { label: "อย่างน้อย 8 ตัวอักษร", test: pwd => pwd.length >= 8 },
     { label: "มีตัวอักษรพิมพ์ใหญ่", test: pwd => /[A-Z]/.test(pwd) },
     { label: "มีตัวอักษรพิมพ์เล็ก", test: pwd => /[a-z]/.test(pwd) },
-    { label: "มีตัวเลข", test: pwd => /\d/.test(pwd) }
-  ];
+    { label: "มีตัวเลข", test: pwd => /\d/.test(pwd) },
+    { label: "มีตัวอักษรพิเศษ", test: pwd => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd) }
+  ];  
 
   const checkPasswordStrength = () => {
     return passwordRequirements.reduce((count, req) => {
@@ -49,7 +51,7 @@ const ChangePassword = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/change-password", {
+      await axios.post(`${API_URL}/change-password`, {
         username,
         new_password: newPassword
       });

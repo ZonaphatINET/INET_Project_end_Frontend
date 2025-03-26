@@ -19,6 +19,7 @@ import Navbar from './Navbar';
 import '../styles/StudentToIndus.css';
 import { useNavigate } from 'react-router-dom';
 import AdvancedSearch from './AdvancedSearch';
+import API_URL from '../config'; 
 
 const CompanyList = () => {
   const navigate = useNavigate();
@@ -134,7 +135,7 @@ const CompanyList = () => {
 
   const fetchCompanies = async () => {
     try {
-      const response = await fetch('http://localhost:5000/companies');
+      const response = await fetch(`${API_URL}/companies`);
       const data = await response.json();
       const processedCompanies = data.map(item => ({
         company_id: item.company_id,
@@ -220,7 +221,7 @@ const CompanyList = () => {
 
   const handleAddCompany = async () => {
     try {
-      const response = await fetch('http://localhost:5000/add-company', {
+      const response = await fetch(`${API_URL}/add-company`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -244,7 +245,7 @@ const CompanyList = () => {
 
   const handleEditCompany = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/edit-company/${editingCompany.company_id}`, {
+      const response = await fetch(`${API_URL}/edit-company/${editingCompany.company_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

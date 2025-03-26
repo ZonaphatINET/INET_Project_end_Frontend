@@ -3,6 +3,7 @@ import { Star, Filter, ChevronDown, ChevronUp, Trash, X, AlertTriangle } from 'l
 import Modal from 'react-modal';
 import Navbar from './Navbar';
 import '../styles/AdminReviews.css';
+import API_URL from '../config';
 
 const AdminReviews = () => {
   const [companies, setCompanies] = useState([]);
@@ -27,14 +28,14 @@ const AdminReviews = () => {
       setLoading(true);
       
       // ดึงข้อมูลบริษัททั้งหมด
-      const companiesResponse = await fetch('http://localhost:5000/companies');
+      const companiesResponse = await fetch(`${API_URL}/companies`);
       const companiesData = await companiesResponse.json();
       setCompanies(companiesData);
       
       // ดึงรีวิวของแต่ละบริษัท
       const allReviews = [];
       for (const company of companiesData) {
-        const reviewsResponse = await fetch(`http://localhost:5000/company-reviews/${company.company_id}`);
+        const reviewsResponse = await fetch(`${API_URL}/company-reviews/${company.company_id}`);
         const reviewsData = await reviewsResponse.json();
         
         if (reviewsData.reviews && reviewsData.reviews.length > 0) {
@@ -60,7 +61,7 @@ const AdminReviews = () => {
     if (!reviewToDelete) return;
     
     try {
-      const response = await fetch(`http://localhost:5000/delete-review/${reviewToDelete.review_id}`, {
+      const response = await fetch(`${API_URL}/delete-review/${reviewToDelete.review_id}`, {
         method: 'DELETE'
       });
       

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { User, Mail, Phone, BookOpen, Edit, Save, X, Building2, CheckCircle, RefreshCw } from 'lucide-react';
 import Navbar from './Navbar';
 import '../styles/StudentProfile.css';
+import API_URL from '../config'; 
 
 const StudentProfile = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const StudentProfile = () => {
     const fetchProfile = async () => {
       try {
         // Fetch student profile
-        const profileResponse = await fetch(`http://localhost:5000/student-profile?username=${username}`);
+        const profileResponse = await fetch(`${API_URL}/student-profile?username=${username}`);
         if (!profileResponse.ok) {
           throw new Error(`Error fetching profile: ${profileResponse.status}`);
         }
@@ -28,12 +29,12 @@ const StudentProfile = () => {
         setEditedProfile(profileData.profile);
 
         // Fetch matched company
-        const matchResponse = await fetch(`http://localhost:5000/check-match-status/${student_id}`);
+        const matchResponse = await fetch(`${API_URL}/check-match-status/${student_id}`);
         const matchData = await matchResponse.json();
         
         if (matchData.has_match) {
           // Fetch full company details
-          const companyResponse = await fetch('http://localhost:5000/companies');
+          const companyResponse = await fetch(`${API_URL}/companies`);
           const companiesData = await companyResponse.json();
           
           const company = companiesData.find(
@@ -66,7 +67,7 @@ const StudentProfile = () => {
 
   const handleSaveChanges = async () => {
     try {
-      const response = await fetch("http://localhost:5000/update-profile", {
+      const response = await fetch(`${API_URL}/update-profile`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -98,7 +99,7 @@ const StudentProfile = () => {
     try {
       // Here you would typically call an API to update the match status
       // For this example, I'll simulate the update
-      const response = await fetch(`http://localhost:5000/update-match-status`, {
+      const response = await fetch(`${API_URL}/update-match-status`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -130,7 +131,7 @@ const StudentProfile = () => {
   const handleChangeCompany = async () => {
     try {
       // Call API to remove the existing match
-      const response = await fetch(`http://localhost:5000/remove-match/${student_id}`, {
+      const response = await fetch(`${API_URL}/remove-match/${student_id}`, {
         method: 'DELETE'
       });
 
