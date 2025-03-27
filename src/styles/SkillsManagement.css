@@ -166,8 +166,9 @@
 
 .available-skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(6, 1fr);
   gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
 }
 
 .skill-button {
@@ -200,6 +201,54 @@
   transform: none;
 }
 
+/* Pagination styles */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: var(--spacing-md) 0 var(--spacing-xl);
+  gap: var(--spacing-xs);
+}
+
+.pagination-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--spacing-xs);
+  background-color: var(--background-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--text-medium);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: var(--background-light);
+  border-color: var(--primary-light);
+  color: var(--primary-color);
+}
+
+.pagination-button.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--text-white);
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-ellipsis {
+  display: inline-block;
+  padding: 0 var(--spacing-2xs);
+  color: var(--text-medium);
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -212,6 +261,12 @@
 }
 
 /* Responsive Styles */
+@media (max-width: 1024px) {
+  .available-skills-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .skills-management-page {
     padding: var(--spacing-md);
@@ -226,7 +281,17 @@
   }
   
   .available-skills-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .pagination-controls {
+    flex-wrap: wrap;
+  }
+  
+  .pagination-button {
+    min-width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
   }
 }
 
@@ -236,10 +301,24 @@
     gap: var(--spacing-xs);
   }
   
+  .available-skills-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
   .skill-button,
   .search-input,
   .add-skill-input {
     font-size: var(--text-xs);
     padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .pagination-controls {
+    gap: var(--spacing-2xs);
+  }
+  
+  .pagination-button {
+    min-width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
   }
 }

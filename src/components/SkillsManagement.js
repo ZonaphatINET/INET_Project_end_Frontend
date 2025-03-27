@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, X, ArrowLeft } from 'lucide-react';
+import { PlusCircle, X, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import Navbar from './Navbar';
 import '../styles/SkillsManagement.css';
 import API_URL from '../config'; 
@@ -12,6 +12,10 @@ const SkillsManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const username = localStorage.getItem('username');
+  
+  // เพิ่มตัวแปรสำหรับการแบ่งหน้า
+  const [currentPage, setCurrentPage] = useState(1);
+  const [skillsPerPage] = useState(18);
 
   useEffect(() => {
     // โหลดข้อมูลทักษะที่มีทั้งหมด
@@ -44,6 +48,19 @@ const SkillsManagement = () => {
   const filteredSkills = availableSkills.filter(skill => 
     skill.skill.skill_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  // คำนวณจำนวนหน้าทั้งหมด
+  const totalPages = Math.ceil(filteredSkills.length / skillsPerPage);
+  
+  // ดึงข้อมูลทักษะที่จะแสดงในหน้าปัจจุบัน
+  const indexOfLastSkill = currentPage * skillsPerPage;
+  const indexOfFirstSkill = indexOfLastSkill - skillsPerPage;
+  const currentSkills = filteredSkills.slice(indexOfFirstSkill, indexOfLastSkill);
+
+  // ฟังก์ชันเปลี่ยนหน้า
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   // เพิ่มทักษะใหม่
   const handleAddNewSkill = async () => {
@@ -116,6 +133,12 @@ const SkillsManagement = () => {
     }
   };
 
+  // ฟังก์ชันรีเซ็ตการค้นหาและหน้า
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // รีเซ็ตกลับไปหน้าแรกเมื่อมีการค้นหาใหม่
+  };
+
   return (
     <div className="skills-management-page">
         <Navbar />
@@ -180,13 +203,13 @@ const SkillsManagement = () => {
                 <input
                     type="text"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={handleSearchChange}
                     placeholder="ค้นหาความสามารถ..."
                     className="search-input"
                 />
             
                 <div className="available-skills-grid">
-                    {filteredSkills.map((skill) => (
+                    {currentSkills.map((skill) => (
                     <button
                         key={skill.skill_id}
                         onClick={() => handleSelectSkill(skill.skill.skill_name)}
@@ -199,6 +222,71 @@ const SkillsManagement = () => {
                     </button>
                     ))}
                 </div>
+
+                {/* Pagination controls */}
+                {filteredSkills.length > skillsPerPage && (
+                  <div className="pagination-controls">
+                    <button 
+                      className="pagination-button"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    
+                    {currentPage > 1 && (
+                      <button 
+                        className="pagination-button"
+                        onClick={() => handlePageChange(1)}
+                      >
+                        1
+                      </button>
+                    )}
+                    
+                    {currentPage > 3 && <span className="pagination-ellipsis">...</span>}
+                    
+                    {currentPage > 2 && (
+                      <button 
+                        className="pagination-button"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                      >
+                        {currentPage - 1}
+                      </button>
+                    )}
+                    
+                    <button className="pagination-button active">
+                      {currentPage}
+                    </button>
+                    
+                    {currentPage < totalPages - 1 && (
+                      <button 
+                        className="pagination-button"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                      >
+                        {currentPage + 1}
+                      </button>
+                    )}
+                    
+                    {currentPage < totalPages - 2 && <span className="pagination-ellipsis">...</span>}
+                    
+                    {currentPage < totalPages && (
+                      <button 
+                        className="pagination-button"
+                        onClick={() => handlePageChange(totalPages)}
+                      >
+                        {totalPages}
+                      </button>
+                    )}
+                    
+                    <button 
+                      className="pagination-button"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </div>
+                )}
             </div>
         </div>
     </div>

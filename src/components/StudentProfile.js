@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, Phone, BookOpen, Edit, Save, X, Building2, CheckCircle, RefreshCw } from 'lucide-react';
+import { User, Mail, Phone, BookOpen, Edit, Save, X, Building2, CheckCircle, RefreshCw, Key } from 'lucide-react';
 import Navbar from './Navbar';
 import '../styles/StudentProfile.css';
 import API_URL from '../config'; 
@@ -146,6 +146,11 @@ const StudentProfile = () => {
       console.error('Error changing company:', error);
       alert('เกิดข้อผิดพลาดในการเปลี่ยนสถานประกอบการ');
     }
+  };
+
+  // ฟังก์ชันเปลี่ยนรหัสผ่าน
+  const handleChangePassword = () => {
+    navigate('/change-password', { state: { username } });
   };
 
   if (error) {
@@ -315,10 +320,16 @@ const StudentProfile = () => {
                   </button>
                 </>
               ) : (
-                <button className="btn-edit" onClick={() => setEditMode(true)}>
-                  <Edit size={20} />
-                  <span>แก้ไขข้อมูล</span>
-                </button>
+                <>
+                  <button className="btn-edit" onClick={() => setEditMode(true)}>
+                    <Edit size={20} />
+                    <span>แก้ไขข้อมูล</span>
+                  </button>
+                  <button className="btn-change-password" onClick={handleChangePassword}>
+                    <Key size={20} />
+                    <span>เปลี่ยนรหัสผ่าน</span>
+                  </button>
+                </>
               )}
             </div>
           </div>

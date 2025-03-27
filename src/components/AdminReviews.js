@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Filter, ChevronDown, ChevronUp, Trash, X, AlertTriangle } from 'lucide-react';
+import { Star, Filter, ChevronDown, ChevronUp, Trash, X, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import Modal from 'react-modal';
 import Navbar from './Navbar';
 import '../styles/AdminReviews.css';
@@ -17,6 +17,10 @@ const AdminReviews = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [reviewToDelete, setReviewToDelete] = useState(null);
+  
+  // เพิ่มตัวแปรสำหรับระบบแบ่งหน้า
+  const [currentPage, setCurrentPage] = useState(1);
+  const [reviewsPerPage] = useState(9);
 
   useEffect(() => {
     Modal.setAppElement('#root');
@@ -118,6 +122,24 @@ const AdminReviews = () => {
     }
   });
 
+  // คำนวณรีวิวที่จะแสดงในหน้าปัจจุบัน
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = sortedReviews.slice(indexOfFirstReview, indexOfLastReview);
+  
+  // คำนวณจำนวนหน้าทั้งหมด
+  const totalPages = Math.ceil(sortedReviews.length / reviewsPerPage);
+  
+  // ฟังก์ชันเปลี่ยนหน้า
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    // เลื่อนขึ้นไปด้านบนของรายการรีวิว
+    window.scrollTo({
+      top: document.querySelector('.reviews-list').offsetTop - 100,
+      behavior: 'smooth'
+    });
+  };
+
   // ฟังก์ชันเปลี่ยนฟิลด์การเรียงลำดับ
   const handleSort = (field) => {
     if (sortField === field) {
@@ -126,6 +148,8 @@ const AdminReviews = () => {
       setSortField(field);
       setSortDirection('desc');
     }
+    // รีเซ็ตหน้าปัจจุบันเมื่อมีการเรียงลำดับใหม่
+    setCurrentPage(1);
   };
 
   // สร้างแถบดาวตามคะแนน
@@ -247,49 +271,116 @@ const AdminReviews = () => {
                 <p>ไม่พบรีวิวที่ตรงตามเงื่อนไขที่กำหนด</p>
               </div>
             ) : (
-              <div className="reviews-list">
-                {sortedReviews.map((review) => (
-                  <div key={review.review_id} className="review-card">
-                    <div className="review-card-header">
-                      <div className="review-company">
-                        <h3>{review.company_name}</h3>
+              <>
+                <div className="reviews-list">
+                  {currentReviews.map((review) => (
+                    <div key={review.review_id} className="review-card">
+                      <div className="review-card-header">
+                        <div className="review-company">
+                          <h3>{review.company_name}</h3>
+                        </div>
+                        <div className="review-rating">
+                          {renderStars(review.review.rating)}
+                          <span className="rating-number">{review.review.rating.toFixed(1)}</span>
+                        </div>
                       </div>
-                      <div className="review-rating">
-                        {renderStars(review.review.rating)}
-                        <span className="rating-number">{review.review.rating.toFixed(1)}</span>
+                      
+                      <div className="review-meta">
+                        <span className="reviewer-name">
+                          โดย: {review.review.reviewer_name || 'นักศึกษา'}
+                        </span>
+                        <span className="review-date">
+                          {formatDate(review.review.created_at)}
+                        </span>
+                      </div>
+                      
+                      {review.review.comment && (
+                        <div className="review-content">
+                          {review.review.comment}
+                        </div>
+                      )}
+                      
+                      <div className="review-actions">
+                        <button 
+                          className="delete-review-btn" 
+                          onClick={() => {
+                            setReviewToDelete(review);
+                            setIsDeleteModalOpen(true);
+                          }}
+                        >
+                          <Trash size={16} />
+                          ลบรีวิว
+                        </button>
                       </div>
                     </div>
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                {sortedReviews.length > reviewsPerPage && (
+                  <div className="pagination-controls">
+                    <button 
+                      className="pagination-button"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
                     
-                    <div className="review-meta">
-                      <span className="reviewer-name">
-                        โดย: {review.review.reviewer_name || 'นักศึกษา'}
-                      </span>
-                      <span className="review-date">
-                        {formatDate(review.review.created_at)}
-                      </span>
-                    </div>
-                    
-                    {review.review.comment && (
-                      <div className="review-content">
-                        {review.review.comment}
-                      </div>
+                    {currentPage > 1 && (
+                      <button 
+                        className="pagination-button"
+                        onClick={() => handlePageChange(1)}
+                      >
+                        1
+                      </button>
                     )}
                     
-                    <div className="review-actions">
+                    {currentPage > 3 && <span className="pagination-ellipsis">...</span>}
+                    
+                    {currentPage > 2 && (
                       <button 
-                        className="delete-review-btn" 
-                        onClick={() => {
-                          setReviewToDelete(review);
-                          setIsDeleteModalOpen(true);
-                        }}
+                        className="pagination-button"
+                        onClick={() => handlePageChange(currentPage - 1)}
                       >
-                        <Trash size={16} />
-                        ลบรีวิว
+                        {currentPage - 1}
                       </button>
-                    </div>
+                    )}
+                    
+                    <button className="pagination-button active">
+                      {currentPage}
+                    </button>
+                    
+                    {currentPage < totalPages - 1 && (
+                      <button 
+                        className="pagination-button"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                      >
+                        {currentPage + 1}
+                      </button>
+                    )}
+                    
+                    {currentPage < totalPages - 2 && <span className="pagination-ellipsis">...</span>}
+                    
+                    {currentPage < totalPages && (
+                      <button 
+                        className="pagination-button"
+                        onClick={() => handlePageChange(totalPages)}
+                      >
+                        {totalPages}
+                      </button>
+                    )}
+                    
+                    <button 
+                      className="pagination-button"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      <ChevronRight size={20} />
+                    </button>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             )}
           </>
         )}
@@ -318,7 +409,10 @@ const AdminReviews = () => {
             <select 
               className="filter-select"
               value={selectedCompany}
-              onChange={(e) => setSelectedCompany(e.target.value)}
+              onChange={(e) => {
+                setSelectedCompany(e.target.value);
+                setCurrentPage(1);  // รีเซ็ตหน้าเมื่อมีการเปลี่ยนตัวกรอง
+              }}
             >
               <option value="all">ทุกบริษัท</option>
               {companies.map(company => (
@@ -336,7 +430,10 @@ const AdminReviews = () => {
                 <button
                   key={rating}
                   className={`rating-button ${minRating === rating ? 'active' : ''}`}
-                  onClick={() => setMinRating(rating)}
+                  onClick={() => {
+                    setMinRating(rating);
+                    setCurrentPage(1);  // รีเซ็ตหน้าเมื่อมีการเปลี่ยนตัวกรอง
+                  }}
                 >
                   {rating === 0 ? 'ทั้งหมด' : `${rating}+`}
                 </button>
@@ -351,6 +448,7 @@ const AdminReviews = () => {
             onClick={() => {
               setSelectedCompany('all');
               setMinRating(0);
+              setCurrentPage(1);  // รีเซ็ตหน้าเมื่อมีการรีเซ็ตตัวกรอง
             }}
           >
             รีเซ็ตตัวกรอง

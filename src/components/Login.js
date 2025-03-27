@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import './Navbar';  // If you need Navbar
 import '../styles/Login.css';
 import logoImage from '../img/logo IT Blue-01-1.png';
 import API_URL from '../config'; 
-
-// Rest of the component remains the same
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -131,6 +129,12 @@ const Login = () => {
           <button type="submit" className="btn-login">
             เข้าสู่ระบบ
           </button>
+          
+          <div className="forgot-password-container">
+            <Link to="/forgot-password" className="forgot-password-link">
+              ลืมรหัสผ่าน?
+            </Link>
+          </div>
         </form>
       </div>
     </div>

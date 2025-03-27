@@ -13,6 +13,8 @@ import SkillsManagement from "./components/SkillsManagement";
 import SkillsCompanyManagement from "./components/SkillsCompanyManagement";
 import StudentToIndus from "./components/StudentToIndus";
 import AdminReviews from "./components/AdminReviews";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 
 // Import global styles
 import './styles/theme.css';
@@ -128,6 +130,24 @@ const App = () => {
               <AdminReviews />
             </ProtectedRoute>
           } 
+        />
+
+        <Route 
+          path="/forgot-password"
+          element={
+            <ProtectedRoute allowedRoles={['student', 'staff', 'teacher']}>
+              <ForgotPassword />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route 
+          path="/reset-password"
+          element={
+            <ProtectedRoute allowedRoles={['student', 'staff', 'teacher']}>
+              <ResetPassword />
+            </ProtectedRoute>
+          }
         />
 
       </Routes>
