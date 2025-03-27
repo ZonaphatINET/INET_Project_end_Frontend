@@ -406,52 +406,57 @@ const StudentTable = () => {
             <div className="table-wrapper">
               <table className="student-table">
               <thead>
-  <tr>
-    <th 
-      onClick={() => requestSort('student_id')} 
-      className="sortable-header"
-      data-sorted={sortConfig.key === 'student_id' ? 'true' : 'false'}
-    >
-      รหัสนักศึกษา {renderSortIcon('student_id')}
-    </th>
-    <th 
-      onClick={() => requestSort('name')} 
-      className="sortable-header"
-      data-sorted={sortConfig.key === 'name' ? 'true' : 'false'}
-    >
-      ชื่อ-นามสกุล {renderSortIcon('name')}
-    </th>
-    <th 
-      onClick={() => requestSort('program')} 
-      className="sortable-header"
-      data-sorted={sortConfig.key === 'program' ? 'true' : 'false'}
-    >
-      สาขาวิชา {renderSortIcon('program')}
-    </th>
-    <th 
-      onClick={() => requestSort('phone')} 
-      className="sortable-header"
-      data-sorted={sortConfig.key === 'phone' ? 'true' : 'false'}
-    >
-      เบอร์โทรศัพท์ {renderSortIcon('phone')}
-    </th>
-    <th 
-      onClick={() => requestSort('status')} 
-      className="sortable-header"
-      data-sorted={sortConfig.key === 'status' ? 'true' : 'false'}
-    >
-      สถานะ {renderSortIcon('status')}
-    </th>
-    <th 
-      onClick={() => requestSort('company')} 
-      className="sortable-header"
-      data-sorted={sortConfig.key === 'company' ? 'true' : 'false'}
-    >
-      สถานประกอบการ {renderSortIcon('company')}
-    </th>
-    <th>จัดการ</th>
-  </tr>
-</thead>
+                <tr>
+                  <th 
+                    onClick={() => requestSort('student_id')} 
+                    className="sortable-header"
+                    data-sorted={sortConfig.key === 'student_id' ? 'true' : 'false'}
+                  >
+                    รหัสนักศึกษา {renderSortIcon('student_id')}
+                  </th>
+                  <th 
+                    onClick={() => requestSort('name')} 
+                    className="sortable-header"
+                    data-sorted={sortConfig.key === 'name' ? 'true' : 'false'}
+                  >
+                    ชื่อ-นามสกุล {renderSortIcon('name')}
+                  </th>
+                  <th 
+                    onClick={() => requestSort('program')} 
+                    className="sortable-header"
+                    data-sorted={sortConfig.key === 'program' ? 'true' : 'false'}
+                  >
+                    สาขาวิชา {renderSortIcon('program')}
+                  </th>
+                  <th 
+                    onClick={() => requestSort('phone')} 
+                    className="sortable-header"
+                    data-sorted={sortConfig.key === 'phone' ? 'true' : 'false'}
+                  >
+                    เบอร์โทรศัพท์ {renderSortIcon('phone')}
+                  </th>
+                  <th 
+                    onClick={() => requestSort('status')} 
+                    className="sortable-header"
+                    data-sorted={sortConfig.key === 'status' ? 'true' : 'false'}
+                  >
+                    สถานะ {renderSortIcon('status')}
+                  </th>
+                  <th 
+                    onClick={() => requestSort('company')} 
+                    className="sortable-header"
+                    data-sorted={sortConfig.key === 'company' ? 'true' : 'false'}
+                  >
+                    สถานประกอบการ {renderSortIcon('company')}
+                  </th>
+                  <th onClick={() => requestSort('')} 
+                    className="sortable-header"
+                    data-sorted={sortConfig.key === '' ? 'true' : 'false'}
+                  >
+                    จัดการ {renderSortIcon('')}
+                  </th>
+                </tr>
+              </thead>
                 <tbody>
   {isLoading ? (
     <tr className="loading-row">
@@ -552,7 +557,8 @@ const StudentTable = () => {
           <ul className="upload-requirements">
             <li>username - รหัสนักศึกษา</li>
             <li>password - รหัสผ่านเริ่มต้น</li>
-            <li>role - บทบาท (student)</li>
+            <li>role - student (บทบาท)</li>
+            <li>first_login - true (ผู้ใช้ใหม่)</li>
             <li>email - อีเมลนักศึกษา</li>
             <li>name - ชื่อ-นามสกุล</li>
             <li>phone - เบอร์โทรศัพท์</li>

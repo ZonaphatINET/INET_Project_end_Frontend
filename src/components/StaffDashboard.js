@@ -45,9 +45,9 @@ const StaffDashboard = () => {
     },
     {
       icon: <BookOpen size={32} />,
-      title: "จัดการคุณสมบัติ",
-      description: "จัดการข้อมูลคุณสมบัติที่สถานประกอบการต้องการ",
-      path: "/skills-Company-management"
+      title: "จัดการรีวิว",
+      description: "จัดการรีวิวของนักศึกษา",
+      path: "/Admin-reviews"
     }
   ];
 
